@@ -10,7 +10,7 @@ public class POSService {
     private final ReceiptWriter receiptWriter;
     private final PromotionService promotionService;
     private final CustomerService customerService;
-    private final ReportService reportService;
+    private ReportService reportService;
 
     // In-memory store of transactions keyed by receipt ID for refunds demo
     private final Map<String, Transaction> transactionsById = new HashMap<>();
@@ -23,6 +23,15 @@ public class POSService {
         this.promotionService = promotionService;
         this.customerService = customerService;
         this.reportService = reportService;
+    }
+
+    public void setReportService(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
+
+    public Map<String, Transaction> getAllTransactions() {
+        return Collections.unmodifiableMap(transactionsById);
     }
 
     public Transaction startTransaction(User cashier) {

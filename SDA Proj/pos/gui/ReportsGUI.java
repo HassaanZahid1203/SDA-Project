@@ -51,15 +51,8 @@ public class ReportsGUI extends JFrame {
     }
 
     private void runReport(String code) {
-        reportService.generate(code);
-        switch (code) {
-            case "1": outputArea.append("Daily report generated.\n"); break;
-            case "2": outputArea.append("Weekly report generated.\n"); break;
-            case "3": outputArea.append("Monthly report generated.\n"); break;
-            case "4": outputArea.append("Cashier-wise report generated.\n"); break;
-            case "5": outputArea.append("Tax & financial report generated.\n"); break;
-            case "6": outputArea.append("Product performance report generated.\n"); break;
-            default: outputArea.append("Unknown report.\n");
-        }
+        String report = reportService.generate(code);
+        outputArea.setText(report);  
     }
+
 }

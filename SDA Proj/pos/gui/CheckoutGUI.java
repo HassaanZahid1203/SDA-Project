@@ -38,8 +38,10 @@ public class CheckoutGUI extends JFrame {
         ReceiptWriter receiptWriter = new ReceiptWriter("receipts");
         PromotionService promoService = new PromotionService();
         customerService = new CustomerService();
-        reportService = new ReportService();
-        posService = new POSService(inventory, receiptWriter, promoService, customerService, reportService);
+
+        posService = new POSService(inventory, receiptWriter, promoService, customerService, null);
+        reportService = new ReportService(posService);
+        posService.setReportService(reportService);
 
         // Start transaction
         currentTx = posService.startTransaction(user);
@@ -96,6 +98,34 @@ public class CheckoutGUI extends JFrame {
         JButton loyaltyBtn = new JButton("Loyalty");
         JButton completeBtn = new JButton("Complete sale");
         JButton clearPaymentsBtn = new JButton("Clear payments");
+        
+       
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setForeground(Color.RED);
+        logoutButton.setFont(new Font("Arial", Font.BOLD, 12));
+
+        logoutButton.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to logout?\nAny unsaved transaction will be lost.",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Close current checkout window
+                dispose();
+                // Return to login screen
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        new LoginGUI().setVisible(true);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        });
 
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payments"));
         paymentPanel.add(cashBtn);
@@ -103,6 +133,7 @@ public class CheckoutGUI extends JFrame {
         paymentPanel.add(loyaltyBtn);
         paymentPanel.add(completeBtn);
         paymentPanel.add(clearPaymentsBtn);
+        paymentPanel.add(logoutButton);
 
         // West: navigation (role-based)
         JPanel navPanel = new JPanel(new GridLayout(0, 1, 8, 8));

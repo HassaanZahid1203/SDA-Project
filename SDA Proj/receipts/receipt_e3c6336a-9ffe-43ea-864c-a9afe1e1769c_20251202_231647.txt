@@ -1,0 +1,22 @@
+=== RECEIPT ===
+Receipt ID: e3c6336a-9ffe-43ea-864c-a9afe1e1769c
+Cashier: admin (Admin)
+Date: 2025-12-02 23:16
+
+Items:
+1018	Chocolate Bar	Unit: PKR 150.00	Qty: 50	Subtotal: PKR 7500.00
+1017	Chips Packet	Unit: PKR 70.00	Qty: 50	Subtotal: PKR 3500.00
+
+Totals:
+Subtotal: PKR 11000.00
+Discounts: PKR 0.00
+Tax: PKR 775.00
+Grand Total: PKR 11775.00
+
+Payments:
+- Cash: PKR 775.00
+- Card: PKR 11000.00
+Total paid: PKR 11775.00
+Change returned: PKR 0.00
+
+Thank you for shopping!

@@ -5,9 +5,9 @@ barcode		name		price		stock		lowStockThreshold		taxRate
 1008		Cooking Oil 5L		2200.00		10		2		0.12
 1019		Juice 1L		220.00		60		10		0.10
 1007		Coffee Jar		950.00		15		3		0.10
-1018		Chocolate Bar		150.00		95		20		0.08
+1018		Chocolate Bar		150.00		50		20		0.08
 1006		Tea Pack		600.00		25		5		0.10
-1017		Chips Packet		70.00		200		30		0.05
+1017		Chips Packet		70.00		150		30		0.05
 1005		Sugar 1kg		180.00		100		20		0.08
 1016		Biscuits Pack		90.00		150		20		0.05
 1004		Rice 5kg		1500.00		20		3		0.08
@@ -16,6 +16,6 @@ barcode		name		price		stock		lowStockThreshold		taxRate
 1014		Detergent 1kg		400.00		50		10		0.10
 1002		Bread Loaf		120.00		50		10		0.05
 1013		Toothpaste		250.00		60		10		0.08
-1001		Milk 1L		250.00		20		5		0.10
+1001		Milk 1L		250.00		30		5		0.10
 1012		Soap Bar		120.00		200		30		0.05
 1009		Butter 250g		350.00		30		5		0.05
