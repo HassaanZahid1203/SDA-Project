@@ -1,0 +1,20 @@
+=== RECEIPT ===
+Receipt ID: eb84c3c5-4c2d-4daf-b732-002c625a25e5
+Cashier: Asad (Manager)
+Date: 2025-12-03 22:24
+
+Items:
+1020	Water Bottle 1.5L	Unit: PKR 60.00	Qty: 10	Subtotal: PKR 600.00
+
+Totals:
+Subtotal: PKR 600.00
+Discounts: PKR 0.00
+Tax: PKR 0.00
+Grand Total: PKR 600.00
+
+Payments:
+- Card: PKR 600.00
+Total paid: PKR 600.00
+Change returned: PKR 0.00
+
+Thank you for shopping!

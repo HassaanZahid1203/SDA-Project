@@ -26,6 +26,7 @@ public class CheckoutGUI extends JFrame {
     private JTable cartTable;
     private DefaultTableModel cartModel;
     private JLabel subtotalLabel, discountLabel, taxLabel, totalLabel, remainingLabel;
+    private JButton removeSelectedBtn; // New button
 
     public CheckoutGUI(User user) throws IOException {
         super("POS System - Checkout (" + user.getRole() + ")");
@@ -79,6 +80,13 @@ public class CheckoutGUI extends JFrame {
         };
         cartTable = new JTable(cartModel);
         cartTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        
+        // Set column widths
+        cartTable.getColumnModel().getColumn(0).setPreferredWidth(80);  // Barcode
+        cartTable.getColumnModel().getColumn(1).setPreferredWidth(150); // Name
+        cartTable.getColumnModel().getColumn(2).setPreferredWidth(50);  // Qty
+        cartTable.getColumnModel().getColumn(3).setPreferredWidth(70);  // Price
+        cartTable.getColumnModel().getColumn(4).setPreferredWidth(80);  // Subtotal
 
         // East: totals
         JPanel totalsPanel = new JPanel(new GridLayout(5, 1, 6, 6));
@@ -101,7 +109,9 @@ public class CheckoutGUI extends JFrame {
         JButton loyaltyBtn = new JButton("Loyalty");
         JButton completeBtn = new JButton("Complete sale");
         JButton clearPaymentsBtn = new JButton("Clear payments");
-        
+        JButton clearCartBtn = new JButton("Clear Cart");
+        removeSelectedBtn = new JButton("Remove Selected"); // New button
+        removeSelectedBtn.setForeground(Color.RED);
        
         JButton logoutButton = new JButton("Logout");
         logoutButton.setForeground(Color.RED);
@@ -136,6 +146,8 @@ public class CheckoutGUI extends JFrame {
         paymentPanel.add(loyaltyBtn);
         paymentPanel.add(completeBtn);
         paymentPanel.add(clearPaymentsBtn);
+        paymentPanel.add(removeSelectedBtn); // Add remove button
+        paymentPanel.add(clearCartBtn);
         paymentPanel.add(logoutButton);
 
         // West: navigation (role-based)
@@ -169,6 +181,8 @@ public class CheckoutGUI extends JFrame {
         promoButton.addActionListener(e -> applyPromo());
         customersBtn.addActionListener(e -> new CustomerGUI(customerService).setVisible(true));
         refundsBtn.addActionListener(e -> new RefundGUI(posService, currentTx.getCashier()).setVisible(true));
+        clearCartBtn.addActionListener(e -> clearCart());
+        removeSelectedBtn.addActionListener(e -> removeSelectedItem()); // Add action for remove button
 
         // Update qty inline in cart table
         cartModel.addTableModelListener(e -> {
@@ -189,7 +203,7 @@ public class CheckoutGUI extends JFrame {
         completeBtn.addActionListener(e -> completeSale());
         clearPaymentsBtn.addActionListener(e -> clearPayments());
 
-        setSize(1100, 650);
+        setSize(1200, 650);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -225,15 +239,22 @@ public class CheckoutGUI extends JFrame {
                     int existingQty = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
                     int newQty = existingQty + qty;
                     cartModel.setValueAt(newQty, i, 2);
-                    cartModel.setValueAt(p.getPrice() * newQty, i, 4);
+                    cartModel.setValueAt(String.format("%.2f", p.getPrice() * newQty), i, 4);
                     merged = true;
                     break;
                 }
             }
             if (!merged) {
-                cartModel.addRow(new Object[]{p.getBarcode(), p.getName(), qty, p.getPrice(), p.getPrice() * qty});
+                cartModel.addRow(new Object[]{
+                    p.getBarcode(), 
+                    p.getName(), 
+                    qty, 
+                    String.format("%.2f", p.getPrice()), 
+                    String.format("%.2f", p.getPrice() * qty)
+                });
             }
             recalcTotals();
+            searchField.setText(""); // Clear search field after adding
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid quantity.");
         }
@@ -247,12 +268,13 @@ public class CheckoutGUI extends JFrame {
             String barcode = cartModel.getValueAt(i, 0).toString();
             int qty = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
             if (!posService.addItem(currentTx, barcode, qty)) {
-                throw new IllegalStateException("Insufficient stock for " + barcode);
+                JOptionPane.showMessageDialog(this, "Insufficient stock for " + barcode);
+                return;
             }
             // Update subtotal cell
             Product p = inventory.findByBarcode(barcode);
             if (p != null) {
-                cartModel.setValueAt(p.getPrice() * qty, i, 4);
+                cartModel.setValueAt(String.format("%.2f", p.getPrice() * qty), i, 4);
             }
         }
         recalcTotals();
@@ -276,6 +298,71 @@ public class CheckoutGUI extends JFrame {
         double paid = payments.stream().mapToDouble(Payment::getAmount).sum();
         double remaining = currentTx.getGrandTotal() - paid;
         remainingLabel.setText("Remaining: PKR " + String.format("%.2f", Math.max(remaining, 0)));
+    }
+
+    private void removeSelectedItem() {
+        int selectedRow = cartTable.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Please select an item to remove.");
+            return;
+        }
+        
+        String barcode = cartModel.getValueAt(selectedRow, 0).toString();
+        int qty = Integer.parseInt(cartModel.getValueAt(selectedRow, 2).toString());
+        
+        // Ask for confirmation
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Remove " + cartModel.getValueAt(selectedRow, 1) + " (x" + qty + ") from cart?",
+            "Confirm Removal",
+            JOptionPane.YES_NO_OPTION
+        );
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Release stock back to inventory
+            inventory.releaseStock(barcode, qty);
+            
+            // Remove row from table
+            cartModel.removeRow(selectedRow);
+            
+            // Refresh transaction from remaining items
+            refreshTransactionFromTable();
+            
+            JOptionPane.showMessageDialog(this, "Item removed from cart.");
+        }
+    }
+
+    private void clearCart() {
+        if (cartModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Cart is already empty.");
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to clear the entire cart?\nAll items will be removed.",
+            "Clear Cart",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Release stock for all items
+            for (int i = 0; i < cartModel.getRowCount(); i++) {
+                String barcode = cartModel.getValueAt(i, 0).toString();
+                int qty = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
+                inventory.releaseStock(barcode, qty);
+            }
+            
+            // Clear cart table
+            cartModel.setRowCount(0);
+            
+            // Create new transaction
+            currentTx = posService.startTransaction(currentTx.getCashier());
+            recalcTotals();
+            
+            JOptionPane.showMessageDialog(this, "Cart cleared.");
+        }
     }
 
     private void payCash() {
@@ -362,7 +449,6 @@ public class CheckoutGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Sale failed.");
         }
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
