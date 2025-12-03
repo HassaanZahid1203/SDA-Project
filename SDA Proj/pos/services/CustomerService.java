@@ -1,43 +1,48 @@
 package pos.services;
 
 import pos.models.Customer;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class CustomerService {
-    private final Map<String, Customer> byPhone = new HashMap<>();
-    private final Map<String, Customer> byId = new HashMap<>();
+    private final CustomerStorage customerStorage;
+    
+    public CustomerService() {
+        this.customerStorage = new CustomerStorage("customers.txt");
+    }
 
     public Customer createOrUpdate(String phone, String name, String contact) {
-        Customer c = byPhone.get(phone);
-        if (c == null) {
-            c = new Customer(phone, name, contact);
-            byPhone.put(phone, c);
-            byId.put(c.getId(), c);
-        } else {
-            c.setName(name);
-            c.setContact(contact);
-        }
-        return c;
+        return customerStorage.createOrUpdate(phone, name, contact);
     }
 
     public Customer attachOrCreate(String phone) {
-        Customer c = byPhone.get(phone);
-        if (c == null) {
-            c = new Customer(phone, phone, phone);
-            byPhone.put(phone, c);
-            byId.put(c.getId(), c);
-        }
-        return c;
+        return customerStorage.attachOrCreate(phone);
     }
 
     public List<Customer> search(String query) {
-        String q = query.toLowerCase();
-        return byId.values().stream()
-                .filter(c -> c.getId().toLowerCase().contains(q)
-                        || c.getName().toLowerCase().contains(q)
-                        || c.getPhone().toLowerCase().contains(q))
-                .collect(Collectors.toList());
+        return customerStorage.search(query);
+    }
+
+    public void addLoyaltyPoints(String phone, double points) {
+        customerStorage.addLoyaltyPoints(phone, points);
+    }
+
+    public void redeemLoyaltyPoints(String phone, double points) {
+        customerStorage.redeemLoyaltyPoints(phone, points);
+    }
+
+    public Customer getByPhone(String phone) {
+        return customerStorage.getByPhone(phone);
+    }
+
+    public Customer getById(String id) {
+        return customerStorage.getById(id);
+    }
+
+    public List<Customer> getAllCustomers() {
+        return customerStorage.getAllCustomers();
+    }
+
+    public void deleteCustomer(String phone) {
+        customerStorage.deleteCustomer(phone);
     }
 }

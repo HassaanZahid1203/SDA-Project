@@ -9,7 +9,7 @@ barcode		name		price		stock		lowStockThreshold		taxRate
 1006		Tea Pack		600.00		0		5		0.10
 1017		Chips Packet		70.00		198		30		0.05
 1005		Sugar 1kg		180.00		100		20		0.08
-1016		Biscuits Pack		90.00		140		20		0.05
+1016		Biscuits Pack		90.00		139		20		0.05
 1004		Rice 5kg		1500.00		20		3		0.08
 1015		Soft Drink 1.5L		180.00		78		15		0.12
 1003		Eggs Dozen		450.00		40		5		0.00

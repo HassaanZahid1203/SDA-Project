@@ -112,6 +112,9 @@ public class CheckoutGUI extends JFrame {
         JButton clearCartBtn = new JButton("Clear Cart");
         removeSelectedBtn = new JButton("Remove Selected"); // New button
         removeSelectedBtn.setForeground(Color.RED);
+        JButton customerBtn = new JButton("Attach Customer");
+        customerBtn.setForeground(Color.BLUE);
+        paymentPanel.add(customerBtn);
        
         JButton logoutButton = new JButton("Logout");
         logoutButton.setForeground(Color.RED);
@@ -202,6 +205,7 @@ public class CheckoutGUI extends JFrame {
         loyaltyBtn.addActionListener(e -> payLoyalty());
         completeBtn.addActionListener(e -> completeSale());
         clearPaymentsBtn.addActionListener(e -> clearPayments());
+        customerBtn.addActionListener(e -> attachCustomer());
 
         setSize(1200, 650);
         setLocationRelativeTo(null);
@@ -257,6 +261,17 @@ public class CheckoutGUI extends JFrame {
             searchField.setText(""); // Clear search field after adding
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid quantity.");
+        }
+    }
+
+    private void attachCustomer() {
+        String phone = JOptionPane.showInputDialog(this, "Enter customer phone number:");
+        if (phone != null && !phone.trim().isEmpty()) {
+            Customer c = customerService.attachOrCreate(phone.trim());
+            currentTx.setCustomer(c);
+            JOptionPane.showMessageDialog(this, 
+                "Customer attached: " + c.getName() + " (" + phone + ")\n" +
+                "Loyalty Points: " + String.format("%.2f", c.getLoyaltyPoints()));
         }
     }
 
@@ -448,6 +463,7 @@ public class CheckoutGUI extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Sale failed.");
         }
+        
     }
 
     public static void main(String[] args) {

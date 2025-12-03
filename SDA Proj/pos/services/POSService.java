@@ -106,6 +106,12 @@ public class POSService {
             String path = receiptWriter.writeReceipt(tx, payments, change);
             tx.setReceiptPath(path);
             
+            // Add loyalty points if customer is attached
+            if (tx.getCustomer() != null) {
+                double loyaltyPoints = tx.getGrandTotal() / 100.0; // 1 point per 100 PKR
+                customerService.addLoyaltyPoints(tx.getCustomer().getPhone(), loyaltyPoints);
+            }
+            
             transactionStorage.saveTransaction(tx);
             
             return true;
