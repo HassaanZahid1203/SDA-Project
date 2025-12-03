@@ -1,0 +1,24 @@
+=== RECEIPT ===
+Receipt ID: 9b4f5821-f94f-4c01-bff7-b8f1847a7d86
+Cashier: Hassaan (Admin)
+Date: 2025-12-03 20:52
+
+Items:
+1018	Chocolate Bar	Unit: PKR 150.00	Qty: 20	Subtotal: PKR 3000.00
+1003	Eggs Dozen	Unit: PKR 450.00	Qty: 10	Subtotal: PKR 4500.00
+1005	Sugar 1kg	Unit: PKR 180.00	Qty: 5	Subtotal: PKR 900.00
+1009	Butter 250g	Unit: PKR 350.00	Qty: 5	Subtotal: PKR 1750.00
+
+Totals:
+Subtotal: PKR 10150.00
+Discounts: PKR 0.00
+Tax: PKR 399.50
+Grand Total: PKR 10549.50
+
+Payments:
+- Card: PKR 7000.00
+- Cash: PKR 3549.50
+Total paid: PKR 10549.50
+Change returned: PKR 0.00
+
+Thank you for shopping!

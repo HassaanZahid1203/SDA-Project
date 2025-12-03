@@ -1,0 +1,20 @@
+=== RECEIPT ===
+Receipt ID: 440e4994-0f57-41e6-a6e0-91176cbbed68
+Cashier: Hassaan (Admin)
+Date: 2025-12-03 14:43
+
+Items:
+1015	Soft Drink 1.5L	Unit: PKR 180.00	Qty: 2	Subtotal: PKR 360.00
+
+Totals:
+Subtotal: PKR 360.00
+Discounts: PKR 0.00
+Tax: PKR 43.20
+Grand Total: PKR 403.20
+
+Payments:
+- Card: PKR 403.20
+Total paid: PKR 403.20
+Change returned: PKR 0.00
+
+Thank you for shopping!

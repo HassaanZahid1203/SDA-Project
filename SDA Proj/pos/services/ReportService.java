@@ -115,8 +115,8 @@ public class ReportService {
         return sb.toString();
     }
 
-    // Helper methods
-    private List<Transaction> getAllTransactions() {
+   private List<Transaction> getAllTransactions() {
+        // This now uses the persistent storage via POSService
         return new ArrayList<>(posService.getAllTransactions().values().stream()
                 .filter(tx -> !tx.isRefunded())
                 .toList());

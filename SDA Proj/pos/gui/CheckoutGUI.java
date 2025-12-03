@@ -38,8 +38,11 @@ public class CheckoutGUI extends JFrame {
         ReceiptWriter receiptWriter = new ReceiptWriter("receipts");
         PromotionService promoService = new PromotionService();
         customerService = new CustomerService();
+        
+        // Create TransactionStorage
+        TransactionStorage transactionStorage = new TransactionStorage("transactions", inventory);
 
-        posService = new POSService(inventory, receiptWriter, promoService, customerService, null);
+        posService = new POSService(inventory, receiptWriter, promoService, customerService, transactionStorage);
         reportService = new ReportService(posService);
         posService.setReportService(reportService);
 

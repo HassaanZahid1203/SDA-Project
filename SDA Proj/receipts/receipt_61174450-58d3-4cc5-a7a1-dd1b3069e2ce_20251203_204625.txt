@@ -1,0 +1,21 @@
+=== RECEIPT ===
+Receipt ID: 61174450-58d3-4cc5-a7a1-dd1b3069e2ce
+Cashier: Hassaan (Admin)
+Date: 2025-12-03 20:46
+
+Items:
+1006	Tea Pack	Unit: PKR 600.00	Qty: 25	Subtotal: PKR 15000.00
+
+Totals:
+Subtotal: PKR 15000.00
+Discounts: PKR 0.00
+Tax: PKR 1500.00
+Grand Total: PKR 16500.00
+
+Payments:
+- Cash: PKR 16000.00
+- Card: PKR 500.00
+Total paid: PKR 16500.00
+Change returned: PKR 0.00
+
+Thank you for shopping!

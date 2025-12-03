@@ -3,6 +3,8 @@ package pos.services;
 import pos.models.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class POSService {
@@ -10,28 +12,32 @@ public class POSService {
     private final ReceiptWriter receiptWriter;
     private final PromotionService promotionService;
     private final CustomerService customerService;
+    private final TransactionStorage transactionStorage;
+    private final RefundLogger refundLogger;
     private ReportService reportService;
-
-    // In-memory store of transactions keyed by receipt ID for refunds demo
-    private final Map<String, Transaction> transactionsById = new HashMap<>();
 
     public POSService(InventoryManager inventory, ReceiptWriter receiptWriter,
                       PromotionService promotionService, CustomerService customerService,
-                      ReportService reportService) {
+                      TransactionStorage transactionStorage) {
         this.inventory = inventory;
         this.receiptWriter = receiptWriter;
         this.promotionService = promotionService;
         this.customerService = customerService;
-        this.reportService = reportService;
+        this.transactionStorage = transactionStorage;
+        this.refundLogger = new RefundLogger("refunds_log.txt");
     }
 
     public void setReportService(ReportService reportService) {
         this.reportService = reportService;
     }
 
-
     public Map<String, Transaction> getAllTransactions() {
-        return Collections.unmodifiableMap(transactionsById);
+        List<Transaction> allTransactions = transactionStorage.loadAllTransactions();
+        Map<String, Transaction> map = new HashMap<>();
+        for (Transaction tx : allTransactions) {
+            map.put(tx.getId(), tx);
+        }
+        return Collections.unmodifiableMap(map);
     }
 
     public Transaction startTransaction(User cashier) {
@@ -45,8 +51,8 @@ public class POSService {
     public boolean addItem(Transaction tx, String barcode, int qty) {
         Product p = inventory.findByBarcode(barcode);
         if (p == null || qty <= 0) return false;
-        if (p.getStock() < qty) return false; // restrict out-of-stock
-        // Reserve stock immediately (simpler)
+        if (p.getStock() < qty) return false;
+        
         inventory.reserveStock(barcode, qty);
 
         CartItem ci = new CartItem(p, qty);
@@ -81,9 +87,7 @@ public class POSService {
         tx.setGrandTotal(subtotal - discount + tax);
     }
 
-   
     public boolean completeSale(Transaction tx, List<Payment> payments) {
-        // ensure totals are up-to-date
         recalculateTotals(tx);
 
         double total = tx.getGrandTotal();
@@ -91,23 +95,19 @@ public class POSService {
         double epsilon = 0.01;
 
         if (paid + epsilon < total) {
-            // not enough paid
             return false;
         }
 
         double change = Math.max(0.0, paid - total);
 
         try {
-            // persist inventory changes
             inventory.save();
-
-            // write receipt (ReceiptWriter.writeReceipt handles payments and change)
+            
             String path = receiptWriter.writeReceipt(tx, payments, change);
             tx.setReceiptPath(path);
-
-            // Optionally store transaction for reports
-            transactionsById.put(tx.getId(), tx);
-
+            
+            transactionStorage.saveTransaction(tx);
+            
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,14 +115,115 @@ public class POSService {
         }
     }
 
-
     public boolean refund(String receiptId, User requester) {
-        // Only Admin/Manager in UserService, but double-check here if needed
-        Transaction tx = transactionsById.get(receiptId);
-        if (tx == null || tx.isRefunded()) return false;
-        // reverse stock
-        tx.getItems().forEach(ci -> inventory.releaseStock(ci.getProduct().getBarcode(), ci.getQuantity()));
-        tx.setRefunded(true);
-        return true;
+        try {
+            Transaction tx = transactionStorage.findTransactionById(receiptId);
+            if (tx == null || tx.isRefunded()) {
+                return false;
+            }
+            
+            // Reverse stock for ALL items
+            for (CartItem ci : tx.getItems()) {
+                inventory.releaseStock(ci.getProduct().getBarcode(), ci.getQuantity());
+            }
+            
+            // Mark as fully refunded
+            tx.setRefunded(true);
+            
+            // Update in storage
+            transactionStorage.updateTransaction(tx);
+            
+            // Save inventory
+            inventory.save();
+            
+            // Log the refund
+            refundLogger.logFullRefund(tx, requester);
+            
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean partialRefund(String receiptId, List<Integer> itemIndices, User requester) {
+        try {
+            Transaction tx = transactionStorage.findTransactionById(receiptId);
+            if (tx == null || tx.isRefunded()) {
+                return false;
+            }
+            
+            List<CartItem> allItems = tx.getItems();
+            List<CartItem> refundedItems = new ArrayList<>();
+            double refundAmount = 0;
+            
+            // Reverse stock for selected items
+            for (int index : itemIndices) {
+                if (index >= 0 && index < allItems.size()) {
+                    CartItem ci = allItems.get(index);
+                    inventory.releaseStock(ci.getProduct().getBarcode(), ci.getQuantity());
+                    refundedItems.add(ci);
+                    refundAmount += ci.getLineSubtotal();
+                }
+            }
+            
+            if (refundedItems.isEmpty()) {
+                return false;
+            }
+            
+            // Mark items as refunded (we'll create a copy without refunded items)
+            List<CartItem> remainingItems = new ArrayList<>();
+            for (int i = 0; i < allItems.size(); i++) {
+                if (!itemIndices.contains(i)) {
+                    remainingItems.add(allItems.get(i));
+                }
+            }
+            
+            // Update transaction with remaining items
+            // We'll create a new transaction with remaining items
+            Transaction updatedTx = new Transaction(tx.getCashier());
+            
+            // Copy ID and timestamp from original
+            try {
+                java.lang.reflect.Field idField = Transaction.class.getDeclaredField("id");
+                idField.setAccessible(true);
+                idField.set(updatedTx, tx.getId());
+                
+                java.lang.reflect.Field timestampField = Transaction.class.getDeclaredField("timestamp");
+                timestampField.setAccessible(true);
+                timestampField.set(updatedTx, tx.getTimestamp());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            // Add remaining items
+            updatedTx.getItems().addAll(remainingItems);
+            
+            // Recalculate totals
+            recalculateTotals(updatedTx);
+            
+            // Copy other properties
+            updatedTx.setReceiptPath(tx.getReceiptPath());
+            updatedTx.setPromoCode(tx.getPromoCode());
+            updatedTx.setRefunded(remainingItems.isEmpty()); // Mark as refunded only if no items left
+            
+            // Update in storage
+            transactionStorage.updateTransaction(updatedTx);
+            
+            // Save inventory
+            inventory.save();
+            
+            // Log the partial refund
+            refundLogger.logPartialRefund(tx, refundedItems, refundAmount, requester);
+            
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public Transaction getTransactionById(String id) {
+        return transactionStorage.findTransactionById(id);
     }
 }

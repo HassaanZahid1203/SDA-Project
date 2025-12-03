@@ -1,0 +1,21 @@
+=== RECEIPT ===
+Receipt ID: aaaab7a2-d34c-4b36-9c9f-e479f553898e
+Cashier: Hassaan (Admin)
+Date: 2025-12-03 13:13
+
+Items:
+1011	Shampoo Bottle	Unit: PKR 550.00	Qty: 4	Subtotal: PKR 2200.00
+1001	Milk 1L	Unit: PKR 250.00	Qty: 30	Subtotal: PKR 7500.00
+
+Totals:
+Subtotal: PKR 9700.00
+Discounts: PKR 0.00
+Tax: PKR 1080.00
+Grand Total: PKR 10780.00
+
+Payments:
+- Cash: PKR 10780.00
+Total paid: PKR 10780.00
+Change returned: PKR 0.00
+
+Thank you for shopping!

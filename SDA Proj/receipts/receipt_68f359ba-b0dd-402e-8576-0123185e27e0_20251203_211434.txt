@@ -1,0 +1,23 @@
+=== RECEIPT ===
+Receipt ID: 68f359ba-b0dd-402e-8576-0123185e27e0
+Cashier: Hassaan (Admin)
+Date: 2025-12-03 21:14
+
+Items:
+1006	Tea Pack	Unit: PKR 600.00	Qty: 25	Subtotal: PKR 15000.00
+1003	Eggs Dozen	Unit: PKR 450.00	Qty: 40	Subtotal: PKR 18000.00
+1001	Milk 1L	Unit: PKR 250.00	Qty: 30	Subtotal: PKR 7500.00
+1009	Butter 250g	Unit: PKR 350.00	Qty: 30	Subtotal: PKR 10500.00
+
+Totals:
+Subtotal: PKR 51000.00
+Discounts: PKR 0.00
+Tax: PKR 2775.00
+Grand Total: PKR 53775.00
+
+Payments:
+- Cash: PKR 55000.00
+Total paid: PKR 55000.00
+Change returned: PKR 1225.00
+
+Thank you for shopping!

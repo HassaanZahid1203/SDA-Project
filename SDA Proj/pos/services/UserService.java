@@ -17,15 +17,13 @@ public class UserService {
         // === Add your real users here ===
         
         // Admin
-        addUser("Hassaan", "1234", "Admin");       // Hassaan is Admin
+        addUser("Hassaan", "Admin", "Admin");       // Hassaan is Admin
         
         // Managers & Cashiers
-        addUser("Asad",    "asad123", "Manager");
-        addUser("Ali",     "ali123",  "Manager");
-        addUser("Eesha",   "eesha123","Cashier");
+        addUser("Asad",    "Manager1", "Manager");
+        addUser("Ali",     "Manager2",  "Manager");
+        addUser("Eesha",   "Cashier1","Cashier");
         
-        // You can easily add more anytime:
-        // addUser("username", "password", "Admin/Manager/Cashier");
     }
 
     private void addUser(String username, String password, String role) {
