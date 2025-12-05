@@ -1,0 +1,20 @@
+=== RECEIPT ===
+Receipt ID: 7b0ffb23-8ded-418d-ad58-6779d00d648d
+Cashier: Hassaan (Admin)
+Date: 2025-12-04 23:04
+
+Items:
+1016	Biscuits Pack	Unit: PKR 90.00	Qty: 1	Subtotal: PKR 90.00
+
+Totals:
+Subtotal: PKR 90.00
+Discounts: PKR 4.50
+Tax: PKR 4.28
+Grand Total: PKR 89.78
+
+Payments:
+- Cash: PKR 100.00
+Total paid: PKR 100.00
+Change returned: PKR 10.22
+
+Thank you for shopping!

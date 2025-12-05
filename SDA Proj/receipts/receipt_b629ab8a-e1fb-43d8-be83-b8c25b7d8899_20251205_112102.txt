@@ -1,0 +1,22 @@
+=== RECEIPT ===
+Receipt ID: b629ab8a-e1fb-43d8-be83-b8c25b7d8899
+Cashier: Hassaan (Admin)
+Date: 2025-12-05 11:21
+
+Items:
+1003	Eggs Dozen	Unit: PKR 450.00	Qty: 2	Subtotal: PKR 900.00
+1008	Cooking Oil 5L	Unit: PKR 2200.00	Qty: 1	Subtotal: PKR 2200.00
+1019	Juice 1L	Unit: PKR 220.00	Qty: 60	Subtotal: PKR 13200.00
+
+Totals:
+Subtotal: PKR 16300.00
+Discounts: PKR 815.00
+Tax: PKR 1504.80
+Grand Total: PKR 16989.80
+
+Payments:
+- Cash: PKR 16989.80
+Total paid: PKR 16989.80
+Change returned: PKR 0.00
+
+Thank you for shopping!

@@ -6,3 +6,5 @@ TIMESTAMP | REFUND TYPE | RECEIPT ID | PROCESSED BY | AMOUNT | ITEMS
 --------------------------------------------------------------------------------
 2025-12-03 21:16:53 | PARTIAL   | 68f359ba-b0dd-402e-8576-0123185e27e0 | Hassaan (Admin) | PKR 18000.00 | Eggs Dozen(x40)
 2025-12-03 22:59:32 | PARTIAL   | 73d6185b-b430-4f59-bba5-945d14453190 | Ali (Manager) | PKR 360.00 | Soft Drink 1.5L(x2)
+2025-12-04 23:11:16 | FULL      | 7b0ffb23-8ded-418d-ad58-6779d00d648d | Hassaan (Admin) | PKR 89.78 | ALL items (1 items)
+2025-12-05 11:24:58 | PARTIAL   | eb84c3c5-4c2d-4daf-b732-002c625a25e5 | Hassaan (Admin) | PKR 600.00 | Water Bottle 1.5L(x10)

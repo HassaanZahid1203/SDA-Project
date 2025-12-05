@@ -1,0 +1,20 @@
+=== RECEIPT ===
+Receipt ID: bf5c65ff-aa54-4466-a266-a949d891c3ff
+Cashier: Hassaan (Admin)
+Date: 2025-12-04 22:42
+
+Items:
+1017	Chips Packet	Unit: PKR 70.00	Qty: 2	Subtotal: PKR 140.00
+
+Totals:
+Subtotal: PKR 140.00
+Discounts: PKR 0.00
+Tax: PKR 7.00
+Grand Total: PKR 147.00
+
+Payments:
+- Card: PKR 147.00
+Total paid: PKR 147.00
+Change returned: PKR 0.00
+
+Thank you for shopping!

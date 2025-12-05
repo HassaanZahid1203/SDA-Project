@@ -94,7 +94,6 @@ public class InventoryManager {
     }
 
 
-
     public Product findByBarcode(String barcode) {
         return productsByBarcode.get(barcode);
     }
